@@ -5,23 +5,42 @@ import "hardhat/console.sol";
 // import "@openzeppelin/contracts/access/Ownable.sol"; 
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
+
 contract YourContract {
 
-  event SetPurpose(address sender, string purpose);
+    uint256 ticketPrice = 1 wei;
+    address owner;
+    mapping (address => uint256) public ticketHolders;
 
-  string public purpose = "Building Unstoppable Apps!!!";
+    constructor() {
+        owner = msg.sender;
+    }
 
-  constructor() payable {
-    // what should we do on deploy?
-  }
+    function buyTickets(address _user, uint256 _amount) payable public {
+        require(msg.value >= ticketPrice * _amount, "Value incorrect!");
+        addTickets(_user, _amount);
+    }
 
-  function setPurpose(string memory newPurpose) public {
-      purpose = newPurpose;
-      console.log(msg.sender,"set purpose to",purpose);
-      emit SetPurpose(msg.sender, purpose);
-  }
+    function useTickets(address _user, uint256 _amount) public {
+        subTickets(_user, _amount);
+    }
 
-  // to support receiving ETH by default
-  receive() external payable {}
-  fallback() external payable {}
+
+    function addTickets(address _user, uint256 _amount) internal {
+        ticketHolders[_user] = ticketHolders[_user] + _amount;
+    }
+
+    function subTickets(address _user, uint256 _amount) internal {
+        require(ticketHolders[_user] >= _amount, "You do not have enough tickets!");
+        ticketHolders[_user] = ticketHolders[_user] - _amount;
+    }
+
+    function withdraw() public {
+        require(msg.sender == owner, "You are not the owner!");
+        (bool success, ) = payable(owner).call{value: address(this).balance}("");
+        require(success);
+    }
+
+   receive() external payable {}
+   fallback() external payable {}
 }
