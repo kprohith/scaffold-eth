@@ -9,10 +9,35 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
 contract nftTicketing is ERC721URIStorage {
+    using Counters for Counters.Counter;
+    Counters.Counter private currentId;
+
     bool public saleIsActive = false;
+    uint256 public totalTickets = 100;
+    uint256 public availableTickets = 100;
+
+    mapping(address => uint256[]) public ownerTokenIDS; 
 
     constructor() ERC721("nftTickets", "NFTT") {
+        currentId.increment();
+        console.log(currentId.current());
         owner = msg.sender;
+    }
+
+    function mint() public {
+        require(availableTickets> 0, "Not enough tickets available");
+        _safeMint(msg.sender, currentId.current());
+
+        currentId.increment();
+        availableTickets = availableTickets - 1;
+    }
+
+    function availableTicketCount() public view returns (uint256) {
+        return availableTickets;
+    }
+
+    function totalTicketCount() public view returns (uint256) {
+        return totalTickets;
     }
 
     function openSale() public {
