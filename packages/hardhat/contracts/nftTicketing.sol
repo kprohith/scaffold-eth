@@ -19,12 +19,31 @@ contract nftTicketing is ERC721URIStorage, Ownable {
     uint256 public availableTickets = 100;
     uint256 public mintPrice = 40000000000000000;
 
+    mapping(address => bool) public checkIns;
     mapping(address => uint256[]) public ownerTokenIDS; 
 
     constructor() ERC721("nftTickets", "OPNT") {
         currentId.increment();
         console.log(currentId.current());
         // owner = msg.sender;
+    }
+
+    function checkIn(address addy) public {
+        checkIns[addy] = true;
+        uint256 tokenId = ownerTokenIDS[addy][0];
+
+        string memory json = Base64.encode(bytes(string(abi.encodePacked('{ "name": "OPNT #',
+                        Strings.toString(tokenId),
+                        '", "description": "A NFT-powered ticketing system", ',
+                        '"traits": [{ "trait_type": "Checked In", "value": "true" }, { "trait_type": "Purchased", "value": "true" }], ',
+                        '"image": "ipfs://QmWmYVgKziHKQ964iQ5TZgk3wCKrejiZroLfwthDEmr2pQ" }'))));
+
+        
+        string memory tokenURI = string(
+            abi.encodePacked("data:application/json;base64,", json)
+        );
+        console.log(tokenURI);
+        _setTokenURI(currentId.current(), tokenURI);
     }
 
     function mint() public payable {
@@ -45,8 +64,8 @@ contract nftTicketing is ERC721URIStorage, Ownable {
         string memory json = Base64.encode(bytes(string(abi.encodePacked('{ "name": "OPNT #',
                         Strings.toString(currentId.current()),
                         '", "description": "A NFT-powered ticketing system", ',
-                        '"traits": [{ "trait_type": "Checked In", "value": "true" }, { "trait_type": "Purchased", "value": "true" }], ',
-                        '"image": "data:image/svg+xml;base64,',encodedImage,'" }'))));
+                        '"traits": [{ "trait_type": "Checked In", "value": "false" }, { "trait_type": "Purchased", "value": "true" }], ',
+                        '"image": "ipfs://QmWmYVgKziHKQ964iQ5TZgk3wCKrejiZroLfwthDEmr2pQ" }'))));
 
         
         string memory tokenURI = string(
@@ -75,6 +94,10 @@ contract nftTicketing is ERC721URIStorage, Ownable {
 
     function closeSale() public onlyOwner {
       saleIsActive = false;
+    }
+
+    function confirmOwnership(address addy) public view returns (bool) {
+        return ownerTokenIDS[addy].length > 0;
     }
 
     // uint256 ticketPrice = 1 wei;
