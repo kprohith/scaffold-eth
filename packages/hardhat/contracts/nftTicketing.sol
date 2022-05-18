@@ -22,7 +22,7 @@ contract nftTicketing is ERC721URIStorage, Ownable {
     mapping(address => bool) public checkIns;
     mapping(address => uint256[]) public ownerTokenIDS;
 
-    constructor() ERC721("nftTickets", "OPNT") {
+    constructor() ERC721("OpenTicket", "OPNT") {
         currentId.increment();
         console.log(currentId.current());
         // owner = msg.sender;
