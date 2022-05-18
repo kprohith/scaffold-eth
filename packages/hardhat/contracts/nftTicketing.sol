@@ -50,9 +50,7 @@ contract nftTicketing is ERC721URIStorage, Ownable {
                         Strings.toString(tokenId),
                         '", "description": "A NFT-powered ticketing system", ',
                         '"traits": [{ "trait_type": "Checked In", "value": "true" }, { "trait_type": "Purchased", "value": "true" }], ',
-                        '"image": "',
-                        robohash,
-                        '" }'
+                        '"image": "ipfs://Qmdw8JBQJ9VyC5ycANVEAkMzCdR7BoEsSDRPNa3xYKPHQ2/', Strings.toString(tokenId),'" }'
                     )
                 )
             )
@@ -103,9 +101,7 @@ contract nftTicketing is ERC721URIStorage, Ownable {
                         Strings.toString(currentId.current()),
                         '", "description": "A NFT-powered ticketing system", ',
                         '"traits": [{ "trait_type": "Checked In", "value": "false" }, { "trait_type": "Purchased", "value": "true" }], ',
-                        '"image": "',
-                        robohash,
-                        '" }'
+                        '"image": "ipfs://Qmdw8JBQJ9VyC5ycANVEAkMzCdR7BoEsSDRPNa3xYKPHQ2/', Strings.toString(currentId.current()),'" }'
                     )
                 )
             )
